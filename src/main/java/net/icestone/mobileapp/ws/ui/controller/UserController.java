@@ -1,5 +1,6 @@
 package net.icestone.mobileapp.ws.ui.controller;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -8,8 +9,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.appsdeveloperblog.app.ws.ui.model.request.UserDetailsRequestModel;
-import com.appsdeveloperblog.app.ws.ui.model.response.UserRest;
+import net.icestone.mobileapp.ws.shared.dto.UserDto;
+import net.icestone.mobileapp.ws.ui.model.request.UserDetailsRequestModel;
+import net.icestone.mobileapp.ws.ui.model.response.UserRest;
 
 @RestController
 @RequestMapping("/users")
@@ -23,7 +25,16 @@ public class UserController {
 	
 	@PostMapping
 	public UserRest createUser( @RequestBody UserDetailsRequestModel userDetails) {
-		return null;
+		
+		UserRest returnValue = new UserRest();
+		
+		UserDto userDto = new UserDto();
+		BeanUtils.copyProperties(userDetails, userDto);
+		
+		UserDto createdUser = userSerivce.createUser(userDto);
+		BeanUtils.copyProperties(createdUser, returnValue);
+		
+		return returnValue;
 	}
 
 	@PutMapping
