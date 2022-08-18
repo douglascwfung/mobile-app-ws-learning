@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -19,6 +20,7 @@ import net.icestone.mobileapp.ws.exceptions.UserServiceException;
 import net.icestone.mobileapp.ws.io.entity.UserEntity;
 import net.icestone.mobileapp.ws.io.repository.UserRepository;
 import net.icestone.mobileapp.ws.service.UserService;
+import net.icestone.mobileapp.ws.shared.dto.AddressDTO;
 import net.icestone.mobileapp.ws.shared.dto.UserDto;
 import net.icestone.mobileapp.ws.ui.model.response.ErrorMessages;
 
@@ -33,24 +35,32 @@ public class UserServiceImpl implements UserService  {
 
 	@Override
 	public UserDto createUser(UserDto user) {
+		
 
 		if (userRepository.findByEmail(user.getEmail()) != null) throw new RuntimeException("Record Already exists");
+
+		for(int i=0;i<user.getAddresses().size();i++)
+		{
+			AddressDTO address = user.getAddresses().get(i);
+			address.setUserDetails(user);
+			address.setAddressId(UUID.randomUUID().toString());
+			user.getAddresses().set(i, address);
+		}
 		
-		UserEntity userEntity = new UserEntity();
-		BeanUtils.copyProperties(user, userEntity);
+		
+		ModelMapper modelMapper = new ModelMapper();
+		UserEntity userEntity = modelMapper.map(user, UserEntity.class);
 		
 		userEntity.setUserId(UUID.randomUUID().toString());
 		userEntity.setEncryptedPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-
 		
 		UserEntity storedUserDetails = userRepository.save(userEntity);
+		UserDto returnValue = modelMapper.map(storedUserDetails, UserDto.class);
 		
-		UserDto returnValue = new UserDto();
-		
-		BeanUtils.copyProperties(storedUserDetails, returnValue);
 		
 		return returnValue;
 	}
+
 
 	@Override
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {

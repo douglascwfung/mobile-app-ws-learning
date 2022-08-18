@@ -1,7 +1,6 @@
 package net.icestone.mobileapp.ws.ui.model.request;
 
-
-
+import java.util.List;
 
 public class UserDetailsRequestModel {
 //	@NotNull(message="First name cannot be null")
@@ -20,6 +19,8 @@ public class UserDetailsRequestModel {
 //	@Size(min=8,max=16, message="Password must be equal or grater than 8 characters and less than 16 chaeracters")
 	private String password;
 
+	private List<AddressRequestModel> addresses;
+	
 	public String getFirstName() {
 		return firstName;
 	}
@@ -52,4 +53,12 @@ public class UserDetailsRequestModel {
 		this.password = password;
 	}
 
+	public List<AddressRequestModel> getAddresses() {
+		return addresses;
+	}
+	public void setAddresses(List<AddressRequestModel> addresses) {
+		this.addresses = addresses;
+	}
+
+	
 }
