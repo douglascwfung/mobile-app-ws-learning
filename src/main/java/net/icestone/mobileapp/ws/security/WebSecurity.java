@@ -1,5 +1,8 @@
 package net.icestone.mobileapp.ws.security;
 
+import java.util.Arrays;
+
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -7,6 +10,9 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import net.icestone.mobileapp.ws.service.UserService;
 
@@ -16,7 +22,7 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
 	
     private final UserService userDetailsService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
-
+    
     public WebSecurity(UserService userDetailsService, BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.userDetailsService = userDetailsService;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
@@ -25,13 +31,14 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http
+        http        
         .cors()
         .and()
         // control end point access
         .csrf().disable()
         .authorizeRequests()        
-        .antMatchers(HttpMethod.POST, SecurityConstants.SIGN_UP_URL).permitAll()
+        .antMatchers(HttpMethod.POST, SecurityConstants.SIGN_UP_URL).permitAll()        
+        .antMatchers(HttpMethod.GET, SecurityConstants.VERIFICATION_EMAIL_URL).permitAll()
         // other undefined request
         .anyRequest().authenticated()
         //
@@ -61,4 +68,20 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
     }
     
 	
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource()
+    {
+    	final CorsConfiguration configuration = new CorsConfiguration();
+    	   
+    	configuration.setAllowedOrigins(Arrays.asList("*"));
+    	configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE","OPTIONS"));
+    	configuration.setAllowCredentials(true);
+    	configuration.setAllowedHeaders(Arrays.asList("*"));
+    	
+    	final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+    	source.registerCorsConfiguration("/**", configuration);
+    	
+    	return source;
+    }
+    
 }

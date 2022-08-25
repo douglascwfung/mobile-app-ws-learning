@@ -18,7 +18,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.json.AutoConfigureJsonTesters;
@@ -40,6 +39,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import net.icestone.mobileapp.ws.service.impl.AddressServiceImpl;
 import net.icestone.mobileapp.ws.service.impl.UserServiceImpl;
 import net.icestone.mobileapp.ws.shared.dto.UserDto;
 import net.icestone.mobileapp.ws.ui.controller.UserController;
@@ -58,6 +58,10 @@ public class TestUserController {
 	private UserServiceImpl userService;
 	
 	
+	@MockBean
+	private AddressServiceImpl addressService;
+
+	
 	@Autowired
     private JacksonTester<UserRest> jsonUserRest;
 
@@ -74,7 +78,6 @@ public class TestUserController {
 	}
 
 	@Test
-	@Disabled
 	public void getAllUsersAPI() throws Exception {
 
 		// Arrange

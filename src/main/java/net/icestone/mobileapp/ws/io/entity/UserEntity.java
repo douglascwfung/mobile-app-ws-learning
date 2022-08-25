@@ -42,6 +42,10 @@ public class UserEntity implements Serializable {
 	
 	@OneToMany(mappedBy="userDetails", cascade=CascadeType.ALL)
 	private List<AddressEntity> addresses;
+	
+//	
+//	@JoinTable(name="user_roles",)
+//	private Collection<RoleEntity> roles;
 
 	public long getId() {
 		return id;
